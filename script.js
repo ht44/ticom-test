@@ -35,6 +35,8 @@ function getFiles(dir) {
 
   Promise.all(result).then(values => {
     findDuplicates(values);
+  }).catch(err => {
+    console.log(err);
   });
 
 }
@@ -43,8 +45,11 @@ function getSerialNum(file) {
   let match;
   return new Promise((resolve, reject) => {
     fs.readFile(file, 'utf8', (err, str) => {
+      if (err) {
+        reject(err);
+      }
       match = str.match(/[A-Z]{2}\-\d{4}/);
-      resolve(match[0]);
+      resolve({n: file, s:match[0]});
     });
   });
 }
@@ -55,10 +60,24 @@ function findDuplicates(arr) {
   arr = mergesort(arr);
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === arr[i + 1] || arr[i] === arr[i - 1]) {
-      result.push(arr[i]);
-    }
+
+     if (i === 0) {
+       if (arr[i].s === arr[i + 1].s) {
+         result.push(path.basename(arr[i].n));
+       }
+     } else if (i === arr.length - 1) {
+       if (arr[i].s === arr[i - 1].s) {
+         result.push(path.basename(arr[i].n));
+       }
+     } else {
+       if (arr[i].s === arr[i + 1].s || arr[i].s === arr[i - 1].s) {
+         result.push(path.basename(arr[i].n));
+       }
+     }
+
   }
+
   console.log(result);
   return result;
+
 }

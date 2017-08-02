@@ -18,7 +18,7 @@ function merge(left, right) {
       i = 0,
       j = 0;
   while (i < left.length && j < right.length) {
-    if (left[i] <= right[j]) {
+    if (left[i].s <= right[j].s) {
       result.push(left[i]);
       i++;
     } else {
